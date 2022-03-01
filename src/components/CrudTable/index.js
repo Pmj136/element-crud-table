@@ -1,13 +1,10 @@
-import {unref} from "vue";
 import CrudTable from "./CrudTable";
 import {CRUD_TABLE_REQUEST_METHOD} from "../../token";
 import {_request} from "../../util";
 
 export default {
-  install(app, {requestMethod = _request, headers={}} = {}) {
-    let req = requestMethod
-    if (headers) req = (args) => requestMethod({headers: unref(headers), ...args})
-    app.provide(CRUD_TABLE_REQUEST_METHOD, req)
+  install(app, {requestMethod = _request} = {}) {
+    app.provide(CRUD_TABLE_REQUEST_METHOD, requestMethod)
     app.component("CrudTable", CrudTable)
   }
 }
