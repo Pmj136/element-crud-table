@@ -1,12 +1,13 @@
 {
   "name": "element-crud-table",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "scripts": {
     "mock-api": "json-server mock/api.json --port 5000",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "release": "pnpm build && npm publish"
   },
   "unpkg": "dist/index.umd.js",
   "jsdriver": "dist/index.umd.js",
@@ -17,14 +18,8 @@
     "package.json"
   ],
   "peerDependencies": {
-    "@element-plus/icons-vue": "^1.0.0",
     "element-plus": "^2.0.0",
     "vue": "^3.2.0"
-  },
-  "dependencies": {
-    "@element-plus/icons-vue": "^1.0.0",
-    "element-plus": "^2.0.3",
-    "vue": "^3.2.25"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.6",
@@ -32,6 +27,9 @@
     "@vitejs/plugin-vue-jsx": "^1.3.7",
     "json-server": "^0.17.0",
     "sass": "^1.49.9",
-    "vite": "^2.8.0"
+    "vite": "^2.8.0",
+    "@element-plus/icons-vue": "^1.0.0",
+    "element-plus": "^2.0.3",
+    "vue": "^3.2.25"
   }
 }
