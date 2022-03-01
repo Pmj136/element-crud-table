@@ -1,7 +1,11 @@
 # element-crud-table
 
 基于 [vue3](https://github.com/vuejs/core) + [element-plus](https://github.com/element-plus/element-plus) 构建的业务表格组件
-
+#### 更新日志
+- v1.0.3 全局headers 支持响应式
+- v1.0.2 解决peerDependencies错误问题
+- v1.0.1 去除重复依赖包
+- v1.0.0 
 ## 特性介绍
 
 - 零件化，精细化控制，免去难以理解的配置化。内置12个功能组件（零件）！
