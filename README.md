@@ -1,6 +1,6 @@
 # el-table-plus-vue
 
-基于 [vue3](https://github.com/vuejs/core) + [element-plus](https://github.com/element-plus/element-plus) 构建的业务表格组件
+基于 **vue3** + **element-plus** 构建的业务表格组件
 ## 特性介绍
 
 - 零件化，精细化控制，免去难以理解的配置化。内置12个功能组件（零件）！
@@ -197,7 +197,7 @@ createApp(App)
 ## 参考
 
 ```text
-可以在注册的时候，提供请求自定义请求方法、请求headers，默认组件内部使用 fetch 进行网路请求
+可以在注册的时候，提供请求自定义请求方法，默认组件内部使用 fetch 进行网路请求
 
 
 //你自定义的请求方法
@@ -221,10 +221,17 @@ app.use(CrudTable,{requestMethod:request})
 ```text
 描述：顶层容器
 ```
-
+#### attributes
 | 参数      | 说明                           | 类型    | 默认值  | 
 | -------- | ------------------------------| ------ | ------- | 
 | gap     | header、data、main 之间的间隙    | number |    0   | 
+
+#### events
+
+
+| 方法      | 说明                           | 回调    |
+| -------- | ------------------------------| ------ |
+| ready     | 组件加载完成    | 组件实例方法 | 
 
 ### 2、CrudTableData 【**required**】
 
@@ -314,6 +321,7 @@ app.use(CrudTable,{requestMethod:request})
 | 参数      | 说明                           | 类型    | 默认值  | 
 | -------- | ------------------------------| ------ | ------- | 
 | text   | 按钮文字      | string | 新增 | 
+| dialogTitle   | 打开弹窗时的弹窗标题      | string | 新增 | 
 | url   | 提交新增网络请求的 api 路径     |  string |  **required** | 
 | ...rest   | 支持el-button 的其他所有属性     |   |  | 
 
@@ -332,6 +340,7 @@ app.use(CrudTable,{requestMethod:request})
 | 参数      | 说明                           | 类型    | 默认值  | 
 | -------- | ------------------------------| ------ | ------- | 
 | text   | 按钮文字      | string | 编辑 | 
+| dialogTitle   | 打开弹窗时的弹窗标题      | string | 编辑 | 
 | url   | 提交 编辑 请求的 api 路径     |  string |  **required** | 
 | echoUrl   |回显 api路径； 可选，在打开编辑的时候，默认是从表格行中获取数据，若设置了此字段，则从此接口获取数据   |  string |  | 
 | ...rest   | 支持el-button 的其他所有属性     |   |  | 
@@ -361,7 +370,7 @@ app.use(CrudTable,{requestMethod:request})
 假设 url 为 '/api/user' ,在提交请求时，内部会自动转换为 '/api/user/[id]'，请求方式为 'delete'
 ```
 
-### 10、CrudTableBtnPreview
+### 12、CrudTableBtnPreview
 
 ```text
 描述：预览按钮，显示的表单无法编辑
@@ -370,6 +379,7 @@ app.use(CrudTable,{requestMethod:request})
 | 参数      | 说明                           | 类型    | 默认值  | 
 | -------- | ------------------------------| ------ | ------- | 
 | text   | 按钮文字      | string | 查看 |
+| dialogTitle   | 打开弹窗时的弹窗标题      | string | 预览 | 
 | echoUrl   |回显 api路径； 可选，在打开预览的时候，默认是从表格行中获取数据，若设置了此字段，则从此接口获取数据   |  string |  | 
 | ...rest   | 支持el-button 的其他所有属性     |   |  | 
 
