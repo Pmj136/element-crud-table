@@ -1,7 +1,7 @@
 {
   "name": "el-table-plus-vue",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "mock-api": "json-server mock/api.json --port 5000",
     "dev": "vite",
@@ -12,6 +12,10 @@
   "unpkg": "dist/index.umd.js",
   "jsdriver": "dist/index.umd.js",
   "module": "src/index.js",
+  "vetur": {
+    "tags": "tags.json"
+  },
+  "web-types": "web-types.json",
   "files": [
     "dist",
     "src",
