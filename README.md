@@ -1,6 +1,6 @@
-# el-table-plus-vue
+# element-crud-table
 
-基于 **vue3** + **element-plus** 构建的业务表格组件
+基于 vue3 + element-plus 构建的业务表格组件
 ## 特性介绍
 
 - 零件化，精细化控制，免去难以理解的配置化。内置12个功能组件（零件）！
@@ -16,13 +16,12 @@
 
 - vue版本必须3.2+
 - 安装 [element-plus](https://element-plus.gitee.io/zh-CN/guide/design.html)
-- 需安装图标库 [@element-plus/icons-vue](https://element-plus.gitee.io/zh-CN/component/icon.html)
 
 ```shell
 // pnpm
-pnpm add el-table-plus-vue
+pnpm add element-crud-table
 // yarn
-yarn add el-table-plus-vue
+yarn add element-crud-table
 ```
 
 全部引入
@@ -34,8 +33,8 @@ import ElementPlus from "element-plus";
 import "element-plus/lib/theme-chalk/index.css";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 
-import ElementCrudTable from "el-table-plus-vue";
-
+import ElementCrudTable from "element-crud-table";
+import "element-crud-table/dist/style.css";
 createApp(App)
     .use(ElementPlus, {locale: zhCn})
     .use(ElementCrudTable)
@@ -51,8 +50,8 @@ import ElementPlus from "element-plus";
 import "element-plus/lib/theme-chalk/index.css";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 
-import {CrudTable, CrudTableData, CrudTablePagination} from "el-table-plus-vue";
-
+import {CrudTable, CrudTableData, CrudTablePagination} from "element-crud-table";
+import "element-crud-table/dist/style.css";
 createApp(App)
     .use(ElementPlus, {locale: zhCn})
     .use(CrudTable)
@@ -205,13 +204,9 @@ import request from '/path'
 app.use(ElementTablePlus,{requestMethod:request})
 
 
-//还可以是axios
-import axios from 'axios'
-app.use(ElementTablePlus,{requestMethod:axios})
-
 //按需引入时
 import request from '/path'
-import {CrudTable,CrudTableData} from 'el-table-plus-vue'
+import {CrudTable,CrudTableData} from 'element-crud-table'
 app.use(CrudTable,{requestMethod:request})
     .use(CrudTableData)
 ```
@@ -275,7 +270,7 @@ app.use(CrudTable,{requestMethod:request})
 | 参数      | 说明                           | 类型    | 默认值  | 
 | -------- | ------------------------------| ------ | ------- | 
 | defaultFields   | 表单项默认值      | object |  | 
-| formatter   | 字段格式器,[使用参考](https://github.com/Pmj136/el-table-plus-vue/blob/main/examples/UserFormatter.vue)     |  function 或 object |  | 
+| formatter   | 字段格式器,[使用参考](https://github.com/Pmj136/element-crud-table/blob/main/examples/UserFormatter.vue)     |  function 或 object |  | 
 
 ### 6、CrudTableDialog
 
@@ -291,8 +286,8 @@ app.use(CrudTable,{requestMethod:request})
 | -------- | ------------------------------| ------ | ------- | 
 | defaultFields   | 表单项默认值      | object |  | 
 | formProps   | el-form props     |   |  | 
-| inFormatter   | 字段格式器，用于弹窗打开前,[使用方式同formatter，参考](https://github.com/Pmj136/el-table-plus-vue/blob/main/examples/UserFormatter.vue)     |  function 或 object |  | 
-| outFormatter   | 字段格式器，用于发送表单前,[使用方式同formatter，参考](https://github.com/Pmj136/el-table-plus-vue/blob/main/examples/UserFormatter.vue)     |  function 或 object |  | 
+| inFormatter   | 字段格式器，用于弹窗打开前,[使用方式同formatter，参考](https://github.com/Pmj136/element-crud-table/blob/main/examples/UserFormatter.vue)     |  function 或 object |  | 
+| outFormatter   | 字段格式器，用于发送表单前,[使用方式同formatter，参考](https://github.com/Pmj136/element-crud-table/blob/main/examples/UserFormatter.vue)     |  function 或 object |  | 
 | ...rest   | 支持el-dialog 的其他所有属性     |   |  | 
 
 ### 7、CrudTableAction
