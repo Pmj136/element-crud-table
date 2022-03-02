@@ -16,6 +16,10 @@
     "tags": "tags.json"
   },
   "web-types": "web-types.json",
+  "sideEffects": [
+    "dist/*",
+    "src/components/CrudTable/*.css"
+  ],
   "files": [
     "dist",
     "src",
