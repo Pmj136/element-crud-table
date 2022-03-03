@@ -7,9 +7,13 @@ import { PaginationStore } from '../../types'
 export default defineComponent({
   name: 'CrudTableData',
   props: {
-    url: String
+    url: String,
+    autoLoad: {
+      type: Boolean,
+      default: true
+    }
   },
-  setup({url}, {slots}) {
+  setup({url, autoLoad}, {slots}) {
     if (isDev) {
       checkUnSetUrlErrLog('list', url)
     }
@@ -53,7 +57,7 @@ export default defineComponent({
     }
     const on = inject<Function>('on')
     on!(ACTION__SET_LIST, setList)
-    setList()
+    if (autoLoad) setList()
 
     return () => (
       <el-table

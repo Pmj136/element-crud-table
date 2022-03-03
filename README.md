@@ -238,6 +238,7 @@ app.use(CrudTable,{requestMethod:request})
 | 参数      | 说明                           | 类型    | 默认值  | 
 | -------- | ------------------------------| ------ | ------- | 
 | url   | 数据列表 接口地址      | string | **required** | 
+| autoLoad   | 在组件挂载时自动加载数据      | boolean | true | 
 
 ### 3、CrudTablePagination
 
