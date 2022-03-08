@@ -1,7 +1,6 @@
-import { defineComponent, provide, reactive, toRefs } from 'vue'
-import { ACTION__SET_LIST } from '../../token'
-import { PaginationStore } from '../../types'
-import { useDispatchAction } from '../../hooks'
+import { defineComponent, inject, provide, reactive, toRefs } from 'vue'
+import { PJ_DISPATCH_EVENT, PJ_STORE } from '../../token'
+import { DispatchEventCallback, PaginationStore } from '../../types'
 
 export default defineComponent({
   name: 'CrudTablePagination',
@@ -9,18 +8,18 @@ export default defineComponent({
     pageSize: Number
   },
   setup({pageSize = 15}, {expose, slots}) {
-    const setList = useDispatchAction(ACTION__SET_LIST)
-    const store = reactive<PaginationStore>({
+    const privateStore = reactive<PaginationStore>({
       currentPage: 1,
       defaultPageSize: pageSize,
       total: 0,
       enablePagination: true
     })
-    provide('store', toRefs(store))
+    provide(PJ_STORE, toRefs(privateStore))
+    const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!
 
     const onPageNoChange = (val: number) => {
-      store.currentPage = val
-      setList()
+      privateStore.currentPage = val
+      dispatchEvent('refreshData')
     }
     expose({})
     return () => (
@@ -30,9 +29,9 @@ export default defineComponent({
           <el-pagination
             background
             layout="total,prev, pager, next"
-            current-page={ store.currentPage }
-            default-page-size={ store.defaultPageSize }
-            total={ store.total }
+            current-page={ privateStore.currentPage }
+            default-page-size={ privateStore.defaultPageSize }
+            total={ privateStore.total }
             onCurrentChange={ onPageNoChange }/>
         </div>
       </>

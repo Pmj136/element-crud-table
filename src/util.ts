@@ -1,6 +1,5 @@
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { TYPE_ADD, TYPE_EDIT, TYPE_PREVIEW } from './token'
-import { FuncAskOpt, RequestOpt } from './types'
+import { RequestOpt } from './types'
 
 export const isDev = process.env.NODE_ENV === 'development'
 
@@ -46,46 +45,6 @@ export function formatData(raw: Record<string, any>, formatter: any, delOldPro =
     formatter(newData)
   }
   return newData
-}
-
-export function func_ask_for({
-                               type = 'warning',
-                               title = '此操作将永久删除该记录, 是否继续？',
-                               loadingText = '正在删除',
-                               successTip,
-                               ...reqEntity
-                             }: Partial<FuncAskOpt>, request: Function) {
-  return new Promise(resolve => {
-    ElMessageBox
-      .confirm(title, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type,
-        draggable: true,
-        roundButton: true,
-        beforeClose: async (action, instance, done) => {
-          if (action === 'cancel') {
-            done()
-          }
-          else {
-            try {
-              instance.confirmButtonLoading = true
-              instance.confirmButtonText = loadingText
-              const res = await request(reqEntity)
-              ElMessage.success(successTip || res.msg)
-              done()
-            } catch (e) {
-              instance.confirmButtonText = '重试'
-              console.log(e)
-            } finally {
-              instance.confirmButtonLoading = false
-            }
-          }
-        }
-      })
-      .then(resolve)
-      .catch(e => e)
-  })
 }
 
 export function combineUrl(baseUrl: string, path: string) {

@@ -1,24 +1,26 @@
-import { toRaw } from 'vue'
-import { ACTION__SHOW_DIALOG, TYPE_PREVIEW } from '../../token'
+import { inject, toRaw } from 'vue'
+import { PJ_DISPATCH_EVENT, TYPE_PREVIEW } from '../../token'
 import { checkCompUsePosition, isDev } from '../../util'
-import { CrudTableBtnOpts } from '../../types'
-import { useDispatchAction } from '../../hooks'
+import { CrudTableBtnOpts, DispatchEventCallback } from '../../types'
 
 function CrudTableBtnPreview(props: CrudTableBtnOpts) {
-  const {tableData, text = '查看', dialogTitle = '预览', ...rest} = props
+  const {tableData, text = '查看', ...rest} = props
   if (isDev) {
     checkCompUsePosition(!!tableData, 'CrudTableBtnPreview', 'CrudTableHandler')
   }
-  const showDialog = useDispatchAction(ACTION__SHOW_DIALOG, {
-    type: TYPE_PREVIEW,
-    title: dialogTitle,
-    extraData: toRaw(tableData!.row)
-  })
+  const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!
   return (
     <el-button
       type="text"
       { ...rest }
-      onClick={ showDialog }>
+      onClick={ () => {
+        dispatchEvent('showDialog', {
+          type: TYPE_PREVIEW,
+          title: props.dialogTitle || props['dialog-title'] || '预览',
+          echoUrl: props.echoUrl || props['echo-url'],
+          extraData: toRaw(tableData!.row)
+        })
+      } }>
       { text }
     </el-button>
   )

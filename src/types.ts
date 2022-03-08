@@ -9,15 +9,6 @@ export interface RequestOpt {
   [key: string]: any
 }
 
-export interface FuncAskOpt {
-  type: any;
-  title: string;
-  loadingText: string;
-  successTip: string;
-
-  [key: string]: any;
-}
-
 export interface CrudTableBtnOpts {
   tableData?: {
     row: {
@@ -40,7 +31,7 @@ export interface PaginationStore {
 }
 
 
-interface RowData {
+export interface RowData {
   id: number | string;
 
   [key: string]: any
@@ -53,3 +44,6 @@ export interface ShowDialogArgs {
   url?: string;
   echoUrl?: string;
 }
+
+export type DispatchEventCallback = (eventName: string, ...args: any[]) => void
+export type SetEventCallback = (eventObj: Record<string, Function>) => void

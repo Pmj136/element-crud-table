@@ -1,28 +1,55 @@
 import { inject } from 'vue'
-import {
-  checkCompUsePosition,
-  checkUnSetUrlErrLog,
-  combineUrl,
-  func_ask_for,
-  isDev
-} from '../../util'
-import { ACTION__SET_LIST, CRUD_TABLE_REQUEST_METHOD } from '../../token'
-import { CrudTableBtnOpts } from '../../types'
-import { useDispatchAction } from '../../hooks'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { checkCompUsePosition, checkUnSetUrlErrLog, combineUrl, isDev } from '../../util'
+import { CrudTableBtnOpts, DispatchEventCallback } from '../../types'
+import { PJ_DISPATCH_EVENT, PJ_REQUEST_METHOD } from '../../token'
+
 
 function CrudTableBtnDel(props: CrudTableBtnOpts) {
   const {tableData, url, text = '删除', ...rest} = props
   if (isDev)
     checkCompUsePosition(!!tableData, 'CrudTableBtnDel', 'CrudTableHandler')
 
-  const setList = useDispatchAction(ACTION__SET_LIST)
-  const request = inject<Function>(CRUD_TABLE_REQUEST_METHOD)
+  const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!
+  const request = inject<Function>(PJ_REQUEST_METHOD)!
   const handleDel = () => {
-    if (isDev) checkUnSetUrlErrLog('del', url)
-    func_ask_for({
-      url: combineUrl(url!, tableData!.row.id),
-      successTip: '删除成功'
-    }, request!).then(setList)
+    if (isDev) {
+      checkUnSetUrlErrLog('del', url)
+    }
+    ElMessageBox
+      .confirm('此操作将永久删除该记录, 是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        draggable: true,
+        roundButton: true,
+        beforeClose: async (action, instance, done) => {
+          if (action === 'cancel') {
+            done()
+          }
+          else {
+            try {
+              instance.confirmButtonLoading = true
+              instance.confirmButtonText = '正在删除'
+              const res = await request({
+                url: combineUrl(url!, tableData!.row.id),
+                method: 'delete'
+              })
+              ElMessage.success(res.msg || '删除成功')
+              done()
+            } catch (e) {
+              instance.confirmButtonText = '重试'
+              console.log(e)
+            } finally {
+              instance.confirmButtonLoading = false
+            }
+          }
+        }
+      })
+      .then(() => {
+        dispatchEvent('refreshData')
+      })
+      .catch(e => e)
   }
   return (
     <el-button

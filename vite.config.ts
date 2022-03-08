@@ -7,8 +7,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: './src/index.ts',
-      formats: ['umd','es'],
-      name: 'ElementTablePlus',
+      formats: ['umd', 'es'],
+      name: 'ElementCrudTable',
       fileName: 'index'
     },
     rollupOptions: {
@@ -18,12 +18,6 @@ export default defineConfig({
           vue: 'Vue',
           'element-plus': 'ElementPlus'
         }
-      }
-    },
-    terserOptions: {
-      compress: true,
-      output: {
-        comments: false
       }
     }
   }

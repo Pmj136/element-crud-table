@@ -1,4 +1,23 @@
 {
+  "add": {
+    "name": "1",
+    "age": "1"
+  },
+  "edit": {
+    "id": 1,
+    "name": "张三",
+    "age": "111"
+  },
+  "echo": [
+    {
+      "id": 1,
+      "name": "哈哈哈哈"
+    },
+    {
+      "id": 2,
+      "name": "李四"
+    }
+  ],
   "list": {
     "error": 0,
     "data": {
@@ -118,14 +137,6 @@
     "error": 0,
     "msg": "success",
     "data": null
-  },
-  "edit": {
-    "id": 1,
-    "name": "张三",
-    "age": "111"
-  },
-  "add": {
-    "name": 1
   },
   "del": {}
 }

@@ -1,13 +1,19 @@
 import { defineComponent, inject, ref, ToRefs } from 'vue'
-import { ACTION__SET_LIST, CRUD_TABLE_REQUEST_METHOD } from '../../token'
+import {
+  PJ_REQUEST_METHOD,
+  PJ_SET_EVENT, PJ_SET_EXPOSE_EVENT,
+  PJ_STORE
+} from '../../token'
 import { checkUnSetUrlErrLog, isDev } from '../../util'
-import { PaginationStore } from '../../types'
-
+import { PaginationStore, SetEventCallback } from '../../types'
 
 export default defineComponent({
   name: 'CrudTableData',
   props: {
-    url: String,
+    url: {
+      type: String,
+      required: true
+    },
     autoLoad: {
       type: Boolean,
       default: true
@@ -17,25 +23,31 @@ export default defineComponent({
     if (isDev) {
       checkUnSetUrlErrLog('list', url)
     }
+    const fieldsCache: Record<string, any> = {}
+    const isLoading = ref(true)
+    const tableData = ref([])
     const {
       currentPage,
       defaultPageSize,
       total,
       enablePagination
-    } = inject<Partial<ToRefs<PaginationStore>>>('store', {})
-    const request = inject<Function>(CRUD_TABLE_REQUEST_METHOD)
-    const isLoading = ref(false)
-    const tableData = ref([])
-    const setList = async (params?: object) => {
+    } = inject<Partial<ToRefs<PaginationStore>>>(PJ_STORE, {})
+    const request = inject<Function>(PJ_REQUEST_METHOD)!
+    const setEvent = inject<SetEventCallback>(PJ_SET_EVENT)!
+    const setExposeEvent = inject<SetEventCallback>(PJ_SET_EXPOSE_EVENT)!
+    const getTableData = async (resetPageNo = true, params?: Record<string, any>) => {
+      if (resetPageNo && currentPage) {
+        currentPage.value = 1
+      }
       isLoading.value = true
       try {
-        const res = await request!({
+        const res = await request({
           url,
           method: 'get',
           params: Object.assign({
             pageNo: currentPage?.value,
             pageSize: defaultPageSize?.value
-          }, params || {})
+          }, Object.assign(params || {}, fieldsCache))
         })
         if (enablePagination) {
           const {records, total: resTotal} = res.data
@@ -55,10 +67,19 @@ export default defineComponent({
         isLoading.value = false
       }
     }
-    const on = inject<Function>('on')
-    on!(ACTION__SET_LIST, setList)
-    if (autoLoad) setList()
-
+    if (autoLoad) getTableData()
+    setEvent({getTableData})
+    setExposeEvent({
+      initData(params?: object) {
+        getTableData(true)
+      },
+      refreshData(params?: object) {
+        getTableData(false)
+      },
+      setField(fieldName: string, value: any) {
+        fieldsCache[fieldName] = value
+      },
+    })
     return () => (
       <el-table
         v-loading={ isLoading.value }
@@ -71,7 +92,7 @@ export default defineComponent({
             isLoading.value ? <span/>
               : (
                 <el-empty>
-                  <el-button type="primary" onClick={ setList }>刷新</el-button>
+                  <el-button type="primary" onClick={ getTableData }>刷新</el-button>
                 </el-empty>
               )
           )

@@ -7,7 +7,8 @@ import ElementCrudTable from '../src'
 import '../dist/style.css'
 import request from './request'
 
-createApp(App)
+const app = createApp(App)
   .use(ElementPlus, {locale: zhCn})
-  .use(ElementCrudTable, {requestMethod:request})
-  .mount('#app')
+  .use(ElementCrudTable, {requestMethod: request})
+app.provide(Symbol('a',),1)
+app.mount('#app')

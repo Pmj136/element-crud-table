@@ -1,5 +1,5 @@
 import { type } from './util'
-import { h, VNode } from 'vue'
+import { h, mergeProps, VNode } from 'vue'
 
 export default function patchVModel(vNodes: any[] | undefined, obj: Record<string, any>, isReadonly = false): VNode [] {
   if (!vNodes) return []
@@ -25,11 +25,14 @@ export default function patchVModel(vNodes: any[] | undefined, obj: Record<strin
         })
       }))
     }
-    if (type(nodeType) === 'string') {
+    if (type(nodeType) === 'string' || type(nodeType) === 'symbol') {
       //普通元素
       if (type(node.children) === 'string') return node
       return h(node, patchVModel(node.children, obj, isReadonly))
     }
-    return h(node, () => patchVModel(node.children.default(), obj, isReadonly))
+    if (node.children)
+      return h(node, () => patchVModel(node.children.default(), obj, isReadonly))
+    node.props = mergeProps(node.props, {form: obj, isReadonly})
+    return node
   })
 }

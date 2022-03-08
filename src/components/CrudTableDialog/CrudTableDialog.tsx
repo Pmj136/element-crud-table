@@ -3,14 +3,15 @@ import { Printer } from '@element-plus/icons-vue'
 import patchVModel from '../../patchVModel'
 import { checkUnSetUrlErrLog, combineUrl, formatData, isDev } from '../../util'
 import {
-  ACTION__SHOW_DIALOG,
-  CRUD_TABLE_REQUEST_METHOD,
   DialogType,
+  PJ_DISPATCH_EVENT,
+  PJ_REQUEST_METHOD,
+  PJ_SET_EVENT, PJ_SET_EXPOSE_EVENT,
   TYPE_ADD,
   TYPE_EDIT,
   TYPE_PREVIEW
 } from '../../token'
-import { ShowDialogArgs } from '../../types'
+import { DispatchEventCallback, SetEventCallback, ShowDialogArgs } from '../../types'
 
 const DYNAMIC_REQ_METHOD: Record<string, string> = {
   [TYPE_ADD]: 'post',
@@ -25,24 +26,22 @@ export default defineComponent({
     outFormatter: [Object, Function]
   },
   setup({inFormatter, outFormatter, defaultFields = {}, formProps = {}},
-        {slots, attrs, expose}) {
+        {slots, attrs}) {
     let reqUrl: string | null = null
-    const request = inject<Function>(CRUD_TABLE_REQUEST_METHOD)
+
     const form = ref({...defaultFields})
     const formRef = ref<Ref | null>(null)
     const visible = ref(false) //弹窗可见性
     const dType = ref<DialogType>(null) //弹窗类型
     const dTitle = ref<string | null>(null) //弹窗标题
-    const doTask = async (t: string) => {
-      if (t !== TYPE_PREVIEW) {
-        return request!({
-          url: reqUrl,
-          method: DYNAMIC_REQ_METHOD[t],
-          data: formatData(toRaw(form.value), outFormatter)
-        })
-      }
-      return Promise.resolve()
-    }
+    const loadData = ref(false)
+    const isConfirm = ref(false)
+
+    const request = inject<Function>(PJ_REQUEST_METHOD)!
+    const setEvent = inject<SetEventCallback>(PJ_SET_EVENT)!
+    const setExposeEvent = inject<SetEventCallback>(PJ_SET_EXPOSE_EVENT)!
+    const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!
+
     const onDialogClosed = () => {
       visible.value = false
       formRef.value.resetFields()
@@ -51,48 +50,72 @@ export default defineComponent({
     const onDialogConfirm = () => {
       formRef.value.validate(async (valid: boolean) => {
         if (valid) {
+          isConfirm.value = true
           try {
-            await doTask(dType.value!)
+            const t = dType.value!
+            await request({
+              url: reqUrl,
+              method: DYNAMIC_REQ_METHOD[t],
+              data: formatData(toRaw(form.value), outFormatter)
+            })
+            if (t === TYPE_ADD) {
+              dispatchEvent('initData')
+            }
+            if (t === TYPE_EDIT) {
+              dispatchEvent('refreshData')
+            }
           } catch (e) {
             console.log(e)
           } finally {
             reqUrl = null
+            isConfirm.value = false
             visible.value = false
           }
         }
       })
     }
-    const getFields = () => toRaw(form.value)
-    const setFields = (data: object) => {
-      Object.assign(form.value, data)
+    const setRefreshData = async (echoUrl: string, id: string) => {
+      loadData.value = true
+      try {
+        const freshData = await request!({url: combineUrl(echoUrl, id)})
+        form.value = formatData(freshData, inFormatter)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        loadData.value = false
+      }
     }
-    const setField = (k: string, v: any) => {
-      form.value[k] = v
-    }
-    const on = inject<Function>('on')
-    on!(ACTION__SHOW_DIALOG, ({type, title, url, extraData}: ShowDialogArgs) => {
-      if (isDev) {
-        checkUnSetUrlErrLog(type!, url)
+    setEvent({
+      showDialog({type, title, url, extraData, echoUrl}: ShowDialogArgs) {
+        if (isDev) {
+          checkUnSetUrlErrLog(type!, url)
+        }
+        if (extraData !== undefined) {
+          form.value = formatData(extraData, inFormatter)
+        }
+        if (url !== undefined) {
+          reqUrl = url
+        }
+        if (type !== dType.value) {
+          dTitle.value = title
+          dType.value = type
+        }
+        visible.value = true
+        if (echoUrl && type !== TYPE_ADD) {
+          setRefreshData(echoUrl, extraData!.id as string)
+        }
       }
-      if (url !== undefined) {
-        reqUrl = type === TYPE_ADD ? url : combineUrl(url, extraData!.id as string)
-      }
-      if (extraData !== undefined) {
-        form.value = formatData(extraData, inFormatter)
-      }
-      if (type !== dType.value) {
-        dTitle.value = title
-        dType.value = type
-      }
-      visible.value = true
     })
-    on!('setDialogFormFields', setFields)
-    on!('setDialogFormField', setField)
-    on!('getSearchFormFields', getFields)
-    expose({
-      getFields,
-      setFields,
-      setField
+    setExposeEvent({
+      setDialogFormFields(fields: Record<string, any>) {
+        Object.assign(form.value, fields)
+      },
+      setDialogFormField(fieldName: string, value: any) {
+        form.value[fieldName] = value
+      },
+      getDialogFormFields() {
+        return toRaw(form.value)
+      }
     })
     return () => (
       <el-dialog
@@ -111,13 +134,14 @@ export default defineComponent({
               {
                 dType.value === TYPE_PREVIEW
                   ? <el-button icon={ Printer } type="primary" onClick={ onDialogConfirm }>打印</el-button>
-                  : <el-button type="success" onClick={ onDialogConfirm }>确定</el-button>
+                  : <el-button loading={ isConfirm.value } type="success" onClick={ onDialogConfirm }>确定</el-button>
               }
             </>
           )
         } }
       >
         <el-form
+          v-loading={ loadData.value }
           key={ dType.value }
           inline
           label-position="left"

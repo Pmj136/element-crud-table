@@ -1,7 +1,9 @@
 import { defineComponent, onMounted, onUnmounted, provide } from 'vue'
+import { PJ_DISPATCH_EVENT, PJ_SET_EVENT, PJ_SET_EXPOSE_EVENT } from '../../token'
+import { DispatchEventCallback, SetEventCallback } from '../../types'
 import './index.css'
 
-type Task = Record<string, Function> | null
+type Events = Record<string, Function> | null
 
 export default defineComponent({
   name: 'CrudTable',
@@ -12,25 +14,28 @@ export default defineComponent({
     }
   },
   setup({gap}, {slots, emit, expose}) {
-    let task: Task = {}
-    provide('on', (name: string, fn: Function) => {
-      (task || (task = {}))[name] = fn
+    let events: Events = Object.create(null)
+    let eventsExpose = Object.create(events)
+    provide<SetEventCallback>(PJ_SET_EVENT, (eventObj) => {
+      events || (events = {})
+      Object.assign(events, eventObj)
     })
-    provide('emit', (name: string, ...args: any[]) => {
-      const fn = task![name]
-      if (!fn) {
-        console.error('请使用【CrudTableDialog】设置弹窗表单')
-        return
-      }
-      fn(...args)
+    provide<SetEventCallback>(PJ_SET_EXPOSE_EVENT, (eventObj) => {
+      eventsExpose || (eventsExpose = {})
+      Object.assign(eventsExpose, eventObj)
+    })
+    provide<DispatchEventCallback>(PJ_DISPATCH_EVENT, (eventName, ...args) => {
+      const event = eventsExpose![eventName]
+      event?.(...args)
     })
     onUnmounted(() => {
-      task = null
+      events = null
+      eventsExpose = null
     })
     onMounted(() => {
-      emit('ready', task)
+      emit('ready', eventsExpose)
     })
-    expose(task)
+    expose(eventsExpose)
     return () => (
       <div class="crud-table" style={ {'row-gap': gap + 'px'} }>
         { slots.default?.() }
