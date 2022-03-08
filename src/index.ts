@@ -1,4 +1,4 @@
-import { App } from 'vue'
+import { App, ComponentInternalInstance, getCurrentInstance, h, VNode } from 'vue'
 
 import CrudTable from './components/CrudTable/index'
 import CrudTableHeader from './components/CrudTableHeader/index'
@@ -12,7 +12,7 @@ import CrudTableBtnPreview from './components/CrudTableBtnPreview/index'
 import CrudTableBtnEdit from './components/CrudTableBtnEdit/index'
 import CrudTableBtnDel from './components/CrudTableBtnDel/index'
 import CrudTablePagination from './components/CrudTablePagination/index'
-
+import { default as _patchVModel } from './patchVModel'
 
 export { default as CrudTable } from './components/CrudTable/index'
 export { default as CrudTableHeader } from './components/CrudTableHeader/index'
@@ -26,6 +26,12 @@ export { default as CrudTableBtnPreview } from './components/CrudTableBtnPreview
 export { default as CrudTableBtnEdit } from './components/CrudTableBtnEdit/index'
 export { default as CrudTableBtnDel } from './components/CrudTableBtnDel/index'
 export { default as CrudTablePagination } from './components/CrudTablePagination/index'
+
+export function usePatchVModel() {
+  const currentInstance: ComponentInternalInstance | null = getCurrentInstance()
+  const attrs: any = currentInstance!.attrs
+  return (raw: VNode) => _patchVModel([raw], attrs.form, attrs.isReadonly)
+}
 
 export default {
   install(app: App, args: { requestMethod: Function }) {
