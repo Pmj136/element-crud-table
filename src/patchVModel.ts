@@ -32,7 +32,7 @@ export default function patchVModel(vNodes: any[] | undefined, obj: Record<strin
       let newNode: VNode = node
       if (shapeFlag & ShapeFlags.SLOTS_CHILDREN)
         newNode = h(node, () => patchVModel(node.children.default(), obj, isReadonly))
-      if (shapeFlag & ShapeFlags.ARRAY_CHILDREN)
+      if ((shapeFlag & ShapeFlags.ARRAY_CHILDREN) || (shapeFlag & ShapeFlags.FUNCTIONAL_COMPONENT))
         newNode = h(node, {obj, isReadonly})
       newNode.patchFlag = 0
       return newNode
