@@ -30,7 +30,7 @@ export { default as CrudTablePagination } from './components/CrudTablePagination
 export function usePatchVModel() {
   const currentInstance: ComponentInternalInstance | null = getCurrentInstance()
   const attrs: any = currentInstance!.attrs
-  return (raw: VNode) => _patchVModel([raw], attrs.form, attrs.isReadonly)
+  return (raw: VNode) => _patchVModel([raw], attrs.obj, attrs.isReadonly)
 }
 
 export default {

@@ -1,10 +1,10 @@
-import { type } from './util'
-import { h, mergeProps, VNode } from 'vue'
+import { Fragment, h, VNode } from 'vue'
+import { ShapeFlags } from './token'
 
 export default function patchVModel(vNodes: any[] | undefined, obj: Record<string, any>, isReadonly = false): VNode [] {
   if (!vNodes) return []
   return vNodes.map(node => {
-    const nodeType = node.type
+    const {type: nodeType, shapeFlag} = node
     if (nodeType.name === 'ElFormItem') {
       const {prop, skip} = node.props || {}
       if (skip !== undefined) return node
@@ -25,14 +25,21 @@ export default function patchVModel(vNodes: any[] | undefined, obj: Record<strin
         })
       }))
     }
-    if (type(nodeType) === 'string' || type(nodeType) === 'symbol') {
-      //普通元素
-      if (type(node.children) === 'string') return node
-      return h(node, patchVModel(node.children, obj, isReadonly))
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      return node
     }
-    if (node.children)
-      return h(node, () => patchVModel(node.children.default(), obj, isReadonly))
-    node.props = mergeProps(node.props, {form: obj, isReadonly})
+    if ((shapeFlag & ShapeFlags.COMPONENT)) {
+      let newNode: VNode = node
+      if (shapeFlag & ShapeFlags.SLOTS_CHILDREN)
+        newNode = h(node, () => patchVModel(node.children.default(), obj, isReadonly))
+      if (shapeFlag & ShapeFlags.ARRAY_CHILDREN)
+        newNode = h(node, {obj, isReadonly})
+      newNode.patchFlag = 0
+      return newNode
+    }
+    if (nodeType === Fragment || (shapeFlag & ShapeFlags.ELEMENT) || (shapeFlag & ShapeFlags.TELEPORT)) {
+      node.children = patchVModel(node.children, obj, isReadonly)
+    }
     return node
   })
 }
