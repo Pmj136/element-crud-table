@@ -32,23 +32,37 @@
         <el-form-item label="名称" prop="name">
           <el-input/>
         </el-form-item>
-        <el-form-item label="年龄" prop="age">
+        <el-form-item label="名称aa" prop="namea">
           <el-input/>
         </el-form-item>
+        <!--        <el-form-item label="年龄" prop="age">-->
+        <!--          <el-input/>-->
+        <!--        </el-form-item>-->
+        <!--        <div>-->
+        <!--          div-->
+        <!--        </div>-->
+        <!--        <div>-->
+        <!--          <el-form-item prop="aads">-->
+        <!--            <el-input  placeholder="placeholder"></el-input>-->
+        <!--          </el-form-item>-->
+        <!--        </div>-->
+        <!--        <wrap a="111"/>-->
       </crud-table-dialog>
     </crud-table>
   </div>
 </template>
 
 <script>
+import Wrap from "./Wrap";
 
 export default {
   name: "index",
+  components: {Wrap},
   setup() {
     return {
+      aaaaa: "akfjsfjls",
       onReady(e) {
         e.initData({a: 1}, true)
-        console.log(e)
       }
     }
   }
