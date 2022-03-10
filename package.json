@@ -1,7 +1,7 @@
 {
   "name": "element-crud-table",
   "license": "MIT",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "scripts": {
     "dev": "vite",
     "mock-api": "json-server mock/api.json --port 7000",
