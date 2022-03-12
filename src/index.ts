@@ -27,10 +27,10 @@ export { default as CrudTableBtnEdit } from './components/CrudTableBtnEdit/index
 export { default as CrudTableBtnDel } from './components/CrudTableBtnDel/index'
 export { default as CrudTablePagination } from './components/CrudTablePagination/index'
 
-export function usePatchVModel() {
+export function usePatchVModel(obj?: Record<string, any>) {
   const currentInstance: ComponentInternalInstance | null = getCurrentInstance()
   const attrs: any = currentInstance!.attrs
-  return (raw: VNode, obj?: Record<string, any>) => _patchVModel([raw], obj || attrs.obj, attrs.isReadonly)
+  return (raw: VNode) => _patchVModel([raw], obj || attrs.obj, attrs.isReadonly)
 }
 
 export default {
