@@ -1,20 +1,12 @@
 import { TYPE_ADD, TYPE_EDIT, TYPE_PREVIEW } from './token'
 import { RequestOpt } from './types'
 
-export const isDev = process.env.NODE_ENV === 'development'
-
-function obj2String(obj: Record<string, any>) {
-  let arr: any[] = [], idx: number = 0
-  for (let item in obj) {
-    arr[idx++] = [item, obj[item]]
-  }
-  return new URLSearchParams(arr).toString()
-}
+export const isDev = process.env.NODE_ENV !== 'production'
 
 export async function _request({url, method = 'GET', data, params}: RequestOpt) {
   try {
     let reqUrl = url
-    if (params) reqUrl = reqUrl + '?' + obj2String(params)
+    if (params) reqUrl = reqUrl + '?' + new URLSearchParams(Object.entries(params))
     const resp = await fetch(reqUrl, {
       method,
       body: data

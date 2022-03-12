@@ -30,6 +30,11 @@
       </crud-table-pagination>
       <crud-table-dialog :form-props="{rules:{name:[{required:true}]}}">
         <wrap/>
+        <el-card>
+          <el-form-item prop="aaa11">
+            <el-input/>
+          </el-form-item>
+        </el-card>
       </crud-table-dialog>
     </crud-table>
   </div>
