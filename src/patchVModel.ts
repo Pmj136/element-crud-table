@@ -1,4 +1,4 @@
-import { Fragment, h, VNode } from 'vue'
+import { Comment, Fragment, h, Static, VNode } from 'vue'
 import { ShapeFlags } from './token'
 
 export default function patchVModel(vNodes: any[] | undefined, obj: Record<string, any>, isReadonly = false): VNode [] {
@@ -25,7 +25,7 @@ export default function patchVModel(vNodes: any[] | undefined, obj: Record<strin
         })
       }))
     }
-    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+    if (nodeType === Static || nodeType === Comment || shapeFlag & ShapeFlags.TEXT_CHILDREN) {
       return node
     }
     if ((shapeFlag & ShapeFlags.COMPONENT)) {
@@ -34,7 +34,6 @@ export default function patchVModel(vNodes: any[] | undefined, obj: Record<strin
         newNode = h(node, () => patchVModel(node.children.default(), obj, isReadonly))
       if ((shapeFlag & ShapeFlags.ARRAY_CHILDREN) || (shapeFlag & ShapeFlags.FUNCTIONAL_COMPONENT))
         newNode = h(node, {obj, isReadonly})
-      newNode.patchFlag = 0
       return newNode
     }
     if (nodeType === Fragment || (shapeFlag & ShapeFlags.ELEMENT) || (shapeFlag & ShapeFlags.TELEPORT)) {
