@@ -23,20 +23,22 @@ export function type(o: any) {
 }
 
 export function formatData(raw: Record<string, any>, formatter: any, delOldPro = false) {
-  const newData = {...raw}
-  if (!formatter) return newData
+  for (const k in raw)
+    if (raw[k] === undefined || raw[k].trim() === '')
+      delete raw[k]
+  if (!formatter) return raw
   if (type(formatter) === 'object') {
     for (const prop in formatter) {
-      if (newData[prop]) {
-        Object.assign(newData, formatter[prop](newData[prop]))
-        if (delOldPro) delete newData[prop]
+      if (raw[prop]) {
+        Object.assign(raw, formatter[prop](raw[prop]))
+        if (delOldPro) delete raw[prop]
       }
     }
   }
   if (type(formatter) === 'function') {
-    formatter(newData)
+    formatter(raw)
   }
-  return newData
+  return raw
 }
 
 export function combineUrl(baseUrl: string, path: string) {
