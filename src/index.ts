@@ -1,4 +1,4 @@
-import { App, ComponentInternalInstance, getCurrentInstance, h, VNode } from 'vue'
+import { App, ComponentInternalInstance, getCurrentInstance, h, isReactive, isRef, VNode } from 'vue'
 
 import CrudTable from './components/CrudTable/index'
 import CrudTableHeader from './components/CrudTableHeader/index'
@@ -27,10 +27,22 @@ export { default as CrudTableBtnEdit } from './components/CrudTableBtnEdit/index
 export { default as CrudTableBtnDel } from './components/CrudTableBtnDel/index'
 export { default as CrudTablePagination } from './components/CrudTablePagination/index'
 
-export function usePatchVModel(obj?: Record<string, any>) {
+export function usePatchVModel(obj?: Record<string, any> & { value: Record<string, any> }) {
   const currentInstance: ComponentInternalInstance | null = getCurrentInstance()
   const attrs: any = currentInstance!.attrs
-  return (raw: VNode) => _patchVModel([raw], obj || attrs.obj, attrs.isReadonly)
+  if (obj !== undefined) {
+    if (isReactive(obj))
+      return (raw: VNode) => _patchVModel([raw], obj, attrs.isReadonly)
+    if (isRef(obj))
+      return (raw: VNode) => _patchVModel([raw], obj.value, attrs.isReadonly)
+    console.error('obj is not reactive')
+    return null
+  }
+  if (!attrs.obj) {
+    console.error('props obj is not process')
+    return null
+  }
+  return (raw: VNode) => _patchVModel([raw], attrs.obj, attrs.isReadonly)
 }
 
 export default {
