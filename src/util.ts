@@ -24,7 +24,7 @@ export function type(o: any) {
 
 export function formatData(raw: Record<string, any>, formatter: any, delOldPro = false) {
   for (const k in raw)
-    if (raw[k] === undefined || raw[k].trim() === '')
+    if (raw[k] === undefined || raw[k] === '')
       delete raw[k]
   if (!formatter) return raw
   if (type(formatter) === 'object') {
