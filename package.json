@@ -1,7 +1,7 @@
 {
   "name": "element-crud-table",
   "license": "MIT",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "scripts": {
     "dev": "vite",
     "mock-api": "json-server mock/api.json --port 7000",
@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "release": "pnpm build && npm publish"
   },
+  "types": "index.d.ts",
   "module": "dist/index.es.js",
   "unpkg": "dist/index.umd.js",
   "jsdriver": "dist/index.umd.js",
@@ -22,7 +23,9 @@
     "dist",
     "package.json",
     "web-types.json",
-    "tags.json"
+    "tags.json",
+    "attributes.json",
+    "index.d.ts"
   ],
   "peerDependencies": {
     "element-plus": "^2.0.0",
