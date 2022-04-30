@@ -1,9 +1,8 @@
-import { defineComponent, inject, reactive, Ref, ref, toRaw } from 'vue'
-import { Refresh, Search } from '@element-plus/icons-vue'
-import patchVModel from '../../patchVModel'
-import { formatData } from '../../util'
-import { PJ_DISPATCH_EVENT, PJ_SET_EXPOSE_EVENT } from '../../token'
-import { DispatchEventCallback, SetEventCallback } from '../../types'
+import { defineComponent, reactive, Ref, ref, toRaw } from 'vue';
+import { Refresh, Search } from '@element-plus/icons-vue';
+import patchVModel from '../../patchVModel';
+import { formatData } from '../../util';
+import { useEventDispatcher, useEventRegister } from '../../hooks';
 
 export default defineComponent({
   name: 'CrudTableSearch',
@@ -12,51 +11,51 @@ export default defineComponent({
     formatter: [Object, Function]
   },
   setup({defaultFields = {}, formatter}, {slots}) {
-    const form = reactive<Record<string, any>>({...defaultFields})
-    const formRef = ref<Ref | null>(null)
+    const form = reactive<Record<string, any>>({...defaultFields});
+    const formRef = ref<Ref | null>(null);
 
-    const setExposeEvent = inject<SetEventCallback>(PJ_SET_EXPOSE_EVENT)!
-    const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!
+    const registerEvent = useEventRegister();
+    const dispatchEvent = useEventDispatcher();
 
     const doReset = () => {
-      formRef?.value?.resetFields()
-      dispatchEvent('getTableData')
-      setExposeEvent({
+      formRef?.value?.resetFields();
+      dispatchEvent('getTableData');
+      registerEvent({
         refreshData() {
-          dispatchEvent('getTableData', false)
+          dispatchEvent('getTableData', false);
         }
-      })
-    }
+      }, 'expose');
+    };
     const doSearch = () => {
-      const params = formatData(toRaw(form), formatter)
-      dispatchEvent('getTableData', true, params)
-      setExposeEvent({
+      const params = formatData(toRaw(form), formatter);
+      dispatchEvent('getTableData', true, params);
+      registerEvent({
         refreshData() {
-          dispatchEvent('getTableData', false, params)
+          dispatchEvent('getTableData', false, params);
         }
-      })
-    }
-    setExposeEvent({
+      }, 'expose');
+    };
+    registerEvent({
       setSearchFormFields(fields: Record<string, any>) {
-        Object.assign(form, fields)
+        Object.assign(form, fields);
       },
       setSearchFormField(fieldName: string, value: any) {
-        form[fieldName] = value
+        form[fieldName] = value;
       },
       getSearchFormFields() {
-        return toRaw(form)
+        return toRaw(form);
       }
-    })
+    }, 'expose');
     return () => (
-      <el-form model={ form } ref={ formRef } inline>
-        { patchVModel(slots.default?.(form), form) }
-        <el-form-item style={ {marginRight: '12px'} }>
-          <el-button icon={ Search } type="success" onClick={ doSearch }>搜索</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button icon={ Refresh } type="warning" onClick={ doReset }>重置</el-button>
-        </el-form-item>
-      </el-form>
-    )
+       <el-form model={form} ref={formRef} inline>
+         {patchVModel(slots.default?.(form), form)}
+         <el-form-item style={{marginRight: '12px'}}>
+           <el-button icon={Search} type="success" onClick={doSearch}>搜索</el-button>
+         </el-form-item>
+         <el-form-item>
+           <el-button icon={Refresh} type="warning" onClick={doReset}>重置</el-button>
+         </el-form-item>
+       </el-form>
+    );
   }
-})
+});

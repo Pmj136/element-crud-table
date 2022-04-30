@@ -6,8 +6,8 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, provide } from 'vue';
-import { DispatchEventCallback, SetEventCallback } from '../../types';
-import { PJ_DISPATCH_EVENT, PJ_SET_EVENT, PJ_SET_EXPOSE_EVENT } from '../../token';
+import { PJ_DISPATCH_EVENT, PJ_EMIT_EVENT } from '../../token';
+import { EventDispatcherCb, EventRegisterCb } from '../../types';
 
 const props = defineProps({
    gap: {
@@ -20,15 +20,18 @@ const emits = defineEmits(['ready']);
 let events = Object.create(null);
 let eventsExpose = Object.create(events);
 
-provide<SetEventCallback>(PJ_SET_EVENT, (eventObj) => {
-   events || (events = {});
-   Object.assign(events, eventObj);
+provide<EventRegisterCb>(PJ_EMIT_EVENT, (eventObj, type) => {
+   if (type === 'inner') {
+      events || (events = {});
+      Object.assign(events, eventObj);
+   }
+   if (type === 'expose') {
+      eventsExpose || (eventsExpose = {});
+      Object.assign(eventsExpose, eventObj);
+   }
 });
-provide<SetEventCallback>(PJ_SET_EXPOSE_EVENT, (eventObj) => {
-   eventsExpose || (eventsExpose = {});
-   Object.assign(eventsExpose, eventObj);
-});
-provide<DispatchEventCallback>(PJ_DISPATCH_EVENT, (eventName, ...args) => {
+
+provide<EventDispatcherCb>(PJ_DISPATCH_EVENT, (eventName, ...args) => {
    const event = eventsExpose![eventName];
    return event?.(...args);
 });

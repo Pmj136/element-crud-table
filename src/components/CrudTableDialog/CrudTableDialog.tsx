@@ -1,17 +1,15 @@
-import { defineComponent, inject, Ref, ref, toRaw } from 'vue';
+import { defineComponent, Ref, ref, toRaw } from 'vue';
 import { Printer } from '@element-plus/icons-vue';
 import patchVModel from '../../patchVModel';
 import { checkUnSetUrlErrLog, combineUrl, formatData, isDev } from '../../util';
 import {
   DialogType,
-  PJ_DISPATCH_EVENT,
-  PJ_REQUEST_METHOD,
-  PJ_SET_EVENT, PJ_SET_EXPOSE_EVENT,
   TYPE_ADD,
   TYPE_EDIT,
   TYPE_PREVIEW
 } from '../../token';
-import { DispatchEventCallback, SetEventCallback, ShowDialogArgs } from '../../types';
+import { ShowDialogArgs } from '../../types';
+import { useEventDispatcher, useEventRegister, useRequest } from '../../hooks';
 
 const DYNAMIC_REQ_METHOD: Record<string, string> = {
   [TYPE_ADD]: 'post',
@@ -39,10 +37,9 @@ export default defineComponent({
     const loadData = ref(false);
     const isConfirm = ref(false);
 
-    const request = inject<Function>(PJ_REQUEST_METHOD)!;
-    const setEvent = inject<SetEventCallback>(PJ_SET_EVENT)!;
-    const setExposeEvent = inject<SetEventCallback>(PJ_SET_EXPOSE_EVENT)!;
-    const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!;
+    const request = useRequest();
+    const registerEvent = useEventRegister();
+    const dispatchEvent = useEventDispatcher();
 
     const onDialogClosed = () => {
       visible.value = false;
@@ -67,7 +64,7 @@ export default defineComponent({
               }
             }
             const res = await request({
-              url: reqUrl,
+              url: reqUrl!,
               method: DYNAMIC_REQ_METHOD[t],
               data: formatData(toRaw(form.value), outFormatter)
             });
@@ -91,7 +88,7 @@ export default defineComponent({
     const setRefreshData = async (echoUrl: string, id: string) => {
       loadData.value = true;
       try {
-        const freshData = await request!({url: combineUrl(echoUrl, id)});
+        const freshData = await request({url: combineUrl(echoUrl, id)});
         form.value = formatData(freshData, inFormatter);
         return Promise.resolve();
       } catch (e) {
@@ -100,7 +97,7 @@ export default defineComponent({
         loadData.value = false;
       }
     };
-    const disposeEventObj = {
+    const exposeEventObj = {
       setDialogFormFields(fields: Record<string, any>) {
         Object.assign(form.value, fields);
       },
@@ -111,7 +108,7 @@ export default defineComponent({
         return toRaw(form.value);
       }
     };
-    setEvent({
+    registerEvent({
       async showDialog({type, title, url, extraData, echoUrl}: ShowDialogArgs) {
         if (isDev) {
           checkUnSetUrlErrLog(type!, url);
@@ -129,7 +126,7 @@ export default defineComponent({
           dTitle.value = title;
           dType.value = type;
         }
-        emit('open', {type, handler: disposeEventObj});
+        emit('open', {type, handler: exposeEventObj});
         visible.value = true;
         if (echoUrl && type !== TYPE_ADD) {
           await setRefreshData(echoUrl, extraData!.id as string);
@@ -139,8 +136,8 @@ export default defineComponent({
           emit('opened', type, toRaw(extraData));
         }
       }
-    });
-    setExposeEvent(disposeEventObj);
+    }, 'inner');
+    registerEvent(exposeEventObj, 'expose');
     return () => (
        <el-dialog
           title={dTitle.value}

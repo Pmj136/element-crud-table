@@ -12,9 +12,8 @@
 
 <script setup lang="ts">
 import { checkUnSetUrlErrLog, isDev } from '../../util';
-import { inject, ref, ToRefs } from 'vue';
-import { PaginationStore, SetEventCallback } from '../../types';
-import { PJ_REQUEST_METHOD, PJ_SET_EVENT, PJ_SET_EXPOSE_EVENT, PJ_STORE } from '../../token';
+import { ref } from 'vue';
+import { useEventRegister, usePaginationStore, useRequest } from '../../hooks';
 
 const emits = defineEmits(['load', 'loaded']);
 const props = defineProps({
@@ -40,11 +39,11 @@ const {
    defaultPageSize,
    total,
    enablePagination
-} = inject<Partial<ToRefs<PaginationStore>>>(PJ_STORE, {});
-const request = inject<Function>(PJ_REQUEST_METHOD)!;
-const setEvent = inject<SetEventCallback>(PJ_SET_EVENT)!;
-const setExposeEvent = inject<SetEventCallback>(PJ_SET_EXPOSE_EVENT)!;
-const disposeEventObj = {
+} = usePaginationStore();
+const request = useRequest();
+const registerEvent = useEventRegister();
+
+const exposeEventObj = {
    initData(params?: object) {
       getTableData(true, params);
    },
@@ -59,11 +58,11 @@ const getTableData = async (resetPageNo = true, params?: Record<string, any>) =>
    if (resetPageNo && currentPage) {
       currentPage.value = 1;
    }
-   emits('load', disposeEventObj);
+   emits('load', exposeEventObj);
    isLoading.value = true;
    try {
       const res = await request({
-         url: props.url,
+         url: props.url!,
          method: 'get',
          params: Object.assign({
             pageNo: currentPage?.value,
@@ -90,6 +89,6 @@ const getTableData = async (resetPageNo = true, params?: Record<string, any>) =>
    }
 };
 if (props.autoLoad) getTableData();
-setEvent({getTableData});
-setExposeEvent(disposeEventObj);
+registerEvent({getTableData}, 'inner');
+registerEvent(exposeEventObj, 'expose');
 </script>

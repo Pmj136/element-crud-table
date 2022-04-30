@@ -5,12 +5,10 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
-import { PJ_DISPATCH_EVENT, TYPE_ADD } from '../../token';
-import { DispatchEventCallback } from '../../types';
+import { TYPE_ADD } from '../../token';
+import { useEventDispatcher } from '../../hooks';
 
-const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!;
 const props = defineProps({
    text: {
       type: String,
@@ -22,8 +20,10 @@ const props = defineProps({
       default: '新增'
    }
 });
+
+const dispatch = useEventDispatcher();
 const onBtnClick = () => {
-   dispatchEvent('showDialog', {
+   dispatch('showDialog', {
       type: TYPE_ADD,
       title: props.dialogTitle,
       url: props.url

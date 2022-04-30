@@ -4,10 +4,8 @@
    </div>
 </template>
 <script setup lang="ts">
-import { inject } from 'vue';
-import { DispatchEventCallback } from '../../types';
-import { PJ_DISPATCH_EVENT } from '../../token';
+import { useEventDispatcher } from '../../hooks';
 
-const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!;
-const searchParams = dispatchEvent('getSearchFormFields');
+const dispatch = useEventDispatcher();
+const searchParams = dispatch('getSearchFormFields');
 </script>

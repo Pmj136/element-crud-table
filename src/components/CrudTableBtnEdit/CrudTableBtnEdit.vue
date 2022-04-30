@@ -4,10 +4,9 @@
    </el-button>
 </template>
 <script setup lang="ts">
-import { inject, useSlots } from 'vue';
-import { PJ_DISPATCH_EVENT, TYPE_EDIT } from '../../token';
+import { TYPE_EDIT } from '../../token';
 import { checkCompUsePosition, isDev } from '../../util';
-import { DispatchEventCallback } from '../../types';
+import { useEventDispatcher } from '../../hooks';
 
 const props = defineProps({
    text: {
@@ -26,9 +25,9 @@ if (isDev) {
    checkCompUsePosition(!!props.tableData, 'CrudTableBtnEdit', 'CrudTableHandler');
 }
 
-const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!;
+const dispatch = useEventDispatcher();
 const onBtnClick = () => {
-   dispatchEvent('showDialog', {
+   dispatch('showDialog', {
       type: TYPE_EDIT,
       title: props.dialogTitle,
       url: props.url,

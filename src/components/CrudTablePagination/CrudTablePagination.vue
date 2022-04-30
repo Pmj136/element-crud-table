@@ -12,13 +12,17 @@
 </template>
 
 <script setup lang="ts">
-import { inject, provide, reactive, toRefs } from 'vue';
-import { DispatchEventCallback, PaginationStore } from '../../types';
-import { PJ_DISPATCH_EVENT, PJ_STORE } from '../../token';
+import { provide, reactive, toRefs } from 'vue';
+import { PaginationStore } from '../../types';
+import { PJ_STORE } from '../../token';
+import { useEventDispatcher } from '../../hooks';
 
 const props = defineProps({
    pageSize: Number
 });
+
+const dispatch = useEventDispatcher();
+
 const privateStore = reactive<PaginationStore>({
    currentPage: 1,
    defaultPageSize: props.pageSize || 15,
@@ -26,9 +30,9 @@ const privateStore = reactive<PaginationStore>({
    enablePagination: true
 });
 provide(PJ_STORE, toRefs(privateStore));
-const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!;
+
 const onPageNoChange = (val: number) => {
    privateStore.currentPage = val;
-   dispatchEvent('refreshData');
+   dispatch('refreshData');
 };
 </script>

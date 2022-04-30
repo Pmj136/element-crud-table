@@ -5,11 +5,9 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { checkCompUsePosition, checkUnSetUrlErrLog, combineUrl, isDev } from '../../util';
-import { DispatchEventCallback } from '../../types';
-import { PJ_DISPATCH_EVENT, PJ_REQUEST_METHOD } from '../../token';
+import { useEventDispatcher, useRequest } from '../../hooks';
 
 const props = defineProps({
    text: {
@@ -24,8 +22,9 @@ const tableData = props.tableData;
 if (isDev) {
    checkCompUsePosition(!!tableData, 'CrudTableBtnDel', 'CrudTableHandler');
 }
-const dispatchEvent = inject<DispatchEventCallback>(PJ_DISPATCH_EVENT)!;
-const request = inject<Function>(PJ_REQUEST_METHOD)!;
+
+const dispatch = useEventDispatcher();
+const request = useRequest();
 const onBtnClick = () => {
    if (isDev) {
       checkUnSetUrlErrLog('del', props.url);
@@ -61,7 +60,7 @@ const onBtnClick = () => {
          }
       })
       .then(() => {
-         dispatchEvent('refreshData');
+         dispatch('refreshData');
       })
       .catch(e => e);
 };

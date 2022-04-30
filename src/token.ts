@@ -4,10 +4,10 @@ export const TYPE_PREVIEW = 'PREVIEW';
 
 
 export const PJ_REQUEST_METHOD = 'PJ_REQUEST_METHOD';
-export const PJ_SET_EXPOSE_EVENT = 'PJ_SET_EXPOSE_EVENT';
-export const PJ_SET_EVENT = 'PJ_SET_EVENT';
-export const PJ_DISPATCH_EVENT = 'PJ_DISPATCH_EVENT';
+
 export const PJ_STORE = 'PJ_STORE';
+export const PJ_EMIT_EVENT = 'PJ_EMIT_EVENT';
+export const PJ_DISPATCH_EVENT = 'PJ_DISPATCH_EVENT';
 
 export type DialogType = typeof TYPE_ADD | typeof TYPE_EDIT | typeof TYPE_PREVIEW | null
 
