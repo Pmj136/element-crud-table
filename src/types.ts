@@ -1,4 +1,4 @@
-import { DialogType } from './token'
+import { DialogType } from './token';
 
 export interface RequestOpt {
   url: string;
@@ -6,21 +6,7 @@ export interface RequestOpt {
   data?: BodyInit | null;
   params?: object;
 
-  [key: string]: any
-}
-
-export interface CrudTableBtnOpts {
-  tableData?: {
-    row: {
-      id: any;
-      [key: string]: any;
-    };
-    $index: number;
-  };
-  text: string;
-  url?: string;
-
-  [key: string]: any
+  [key: string]: any;
 }
 
 export interface PaginationStore {
@@ -34,7 +20,7 @@ export interface PaginationStore {
 export interface RowData {
   id: number | string;
 
-  [key: string]: any
+  [key: string]: any;
 }
 
 export interface ShowDialogArgs {
@@ -45,5 +31,7 @@ export interface ShowDialogArgs {
   echoUrl?: string;
 }
 
-export type DispatchEventCallback = (eventName: string, ...args: any[]) => void
+type EventName = 'showDialog' | 'setDialogFormFields' | 'setDialogFormField'
+   | 'getSearchFormFields' | 'initData' | 'refreshData' | 'setField' | 'getTableData'
+export type DispatchEventCallback = (eventName: EventName, ...args: any[]) => any
 export type SetEventCallback = (eventObj: Record<string, Function>) => void
