@@ -1,5 +1,5 @@
 import { App } from 'vue'
-import CrudTable from './CrudTable'
+import CrudTable from './CrudTable.vue'
 import { PJ_REQUEST_METHOD } from '../../token'
 import { _request } from '../../util'
 

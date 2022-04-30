@@ -1,5 +1,5 @@
 import { App } from 'vue'
-import CrudTableBtnAdd from './CrudTableBtnAdd'
+import CrudTableBtnAdd from './CrudTableBtnAdd.vue'
 
 export default {
   install(app: App) {

@@ -1,5 +1,5 @@
 import { App } from 'vue'
-import CrudTableBtnEdit from './CrudTableBtnEdit'
+import CrudTableBtnEdit from './CrudTableBtnEdit.vue'
 
 export default {
   install(app: App) {

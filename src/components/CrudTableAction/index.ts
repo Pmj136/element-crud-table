@@ -1,5 +1,5 @@
 import { App } from 'vue'
-import CrudTableAction from './CrudTableAction'
+import CrudTableAction from './CrudTableAction.vue'
 
 
 export default {
