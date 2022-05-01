@@ -84,12 +84,12 @@
   "crud-table-data": {
     "attributes": [
       "url",
-      "auto-load",
       "params"
     ]
   },
   "crud-table-dialog": {
     "attributes": [
+      "debug",
       "formProps",
       "defaultFields",
       "inFormatter",
@@ -112,7 +112,7 @@
   },
   "crud-table-pagination": {
     "attributes": [
-      "page-size"
+      "pageSize"
     ]
   },
   "crud-table-search": {

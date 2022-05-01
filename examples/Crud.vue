@@ -1,6 +1,6 @@
 <template>
    <div style="height: 90vh">
-      <crud-table @ready="onReady">
+      <crud-table ref="tableRef">
          <crud-table-header ref="table" inline>
             <crud-table-search>
                <el-form-item prop="name">
@@ -14,10 +14,8 @@
                </el-form-item>
             </crud-table-search>
             <crud-table-action>
-               <template #default="{searchParams}">
-                  <crud-table-btn-add url="http://localhost:7000/add" />
-                  <el-button @click="testSlots(searchParams)">按钮</el-button>
-               </template>
+               <crud-table-btn-add url="http://localhost:7000/add" />
+               <el-button type="primary" @click="refreshData">刷新</el-button>
             </crud-table-action>
          </crud-table-header>
          <crud-table-pagination>
@@ -31,7 +29,7 @@
                </crud-table-handler>
             </crud-table-data>
          </crud-table-pagination>
-         <crud-table-dialog debug :default-fields="{name:'xxx'}" @opened="ooo" @confirm="ccc">
+         <crud-table-dialog debug>
             <el-form-item prop="name" label="姓名" required :rules="{required:true}">
                <el-input />
             </el-form-item>
@@ -54,24 +52,11 @@ export default {
    name: 'Crud',
    components: {Wrap},
    setup() {
-      const table = ref();
-      onMounted(() => {
-         console.log(table);
-      });
+      const tableRef = ref();
       return {
-         table,
-         aaaaa: 'akfjsfjls',
-         onReady(e) {
-            // console.log(e)
-         },
-         ooo(t, d) {
-            // console.log(d);
-         },
-         ccc(t, res) {
-            // console.log(res);
-         },
-         testSlots(a) {
-            console.log(a);
+         tableRef,
+         refreshData() {
+            tableRef.value.resetData();
          }
       };
    }

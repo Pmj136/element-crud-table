@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/JetBrains/web-types/master/schema/web-types.json",
   "framework": "vue",
   "name": "element-crud-table",
-  "version": "1.4.0",
+  "version": "1.5.0-rc",
   "contributions": {
     "html": {
       "types-syntax": "typescript",
@@ -22,12 +22,6 @@
                 "type": "number",
                 "kind": "expression"
               }
-            }
-          ],
-          "events": [
-            {
-              "name": "ready",
-              "description": "组件加载完成"
             }
           ],
           "slots": [
@@ -660,14 +654,6 @@
               }
             },
             {
-              "name": "auto-load",
-              "description": "自动加载数据",
-              "value": {
-                "type": "boolean",
-                "kind": "expression"
-              }
-            },
-            {
               "name": "params",
               "description": "请求列表时的参数",
               "value": {
@@ -683,7 +669,11 @@
             },
             {
               "name": "loaded",
-              "description": "数据准备完毕"
+              "description": "数据完成加载"
+            },
+            {
+              "name": "updated",
+              "description": "数据列完成一次更新"
             }
           ],
           "slots": [
@@ -699,6 +689,14 @@
             "symbol": "CrudTableDialog"
           },
           "attributes": [
+            {
+              "name": "debug",
+              "description": "是否开启调试模式，仅开发阶段生效",
+              "value": {
+                "type": "boolean",
+                "kind": "expression"
+              }
+            },
             {
               "name": "formProps",
               "description": "参考 el-form attributes",
@@ -912,6 +910,20 @@
             {
               "name": "default",
               "description": "默认插槽"
+            }
+          ],
+          "events": [
+            {
+              "name": "open",
+              "description": "弹窗打开时"
+            },
+            {
+              "name": "opened",
+              "description": "弹窗已打开"
+            },
+            {
+              "name": "confirm",
+              "description": "点击确认按钮时"
             }
           ]
         },
