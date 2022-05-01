@@ -14,8 +14,8 @@ export default function patchVModel(vNodes: any[] | undefined, obj: Record<strin
         if (isReadonly) {
           return h(child, {
             modelValue: obj[prop],
-            // readonly: true,
-            disabled: true
+            readonly: true,
+            // disabled: true
           });
         }
         return h(child, {

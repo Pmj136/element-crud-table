@@ -1,5 +1,5 @@
 <template>
-   <el-button type="text" style="color: #e06161" v-bind="$attrs" @click="onBtnClick">
+   <el-button type="text" style="color: #e06161" @click="onBtnClick" v-bind="$attrs">
       {{ props.text }}
    </el-button>
 </template>

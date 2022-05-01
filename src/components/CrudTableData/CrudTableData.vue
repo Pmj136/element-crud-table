@@ -1,9 +1,8 @@
 <template>
-   <el-table :data="tableData" v-loading="isLoading" border stripe height="100%">
+   <el-table v-bind="$attrs" :data="tableData" v-loading="isLoading" border stripe height="100%">
       <slot />
       <template #empty>
-         <span v-show="isLoading" />
-         <el-empty v-show="!isLoading">
+         <el-empty v-show="!isLoading && tableData.length===0">
             <el-button type="primary" @click="getTableData">刷新</el-button>
          </el-empty>
       </template>
@@ -12,19 +11,12 @@
 
 <script setup lang="ts">
 import { checkUnSetUrlErrLog, isDev } from '../../util';
-import { ref } from 'vue';
+import { nextTick, ref, toRaw } from 'vue';
 import { useEventRegister, usePaginationStore, useRequest } from '../../hooks';
 
-const emits = defineEmits(['load', 'loaded']);
+const emits = defineEmits(['load', 'loaded', 'updated']);
 const props = defineProps({
-   url: {
-      type: String,
-      required: true
-   },
-   autoLoad: {
-      type: Boolean,
-      default: true
-   },
+   url: String,
    params: Object
 });
 
@@ -43,8 +35,12 @@ const {
 const request = useRequest();
 const registerEvent = useEventRegister();
 
+const appendParams = (fieldName: string, value: any) => {
+   fieldsCache[fieldName] = value;
+};
+
 const exposeEventObj = {
-   initData(params?: object) {
+   resetData(params?: object) {
       getTableData(true, params);
    },
    refreshData(params?: object) {
@@ -54,11 +50,11 @@ const exposeEventObj = {
       fieldsCache[fieldName] = value;
    }
 };
+
 const getTableData = async (resetPageNo = true, params?: Record<string, any>) => {
    if (resetPageNo && currentPage) {
       currentPage.value = 1;
    }
-   emits('load', exposeEventObj);
    isLoading.value = true;
    try {
       const res = await request({
@@ -79,16 +75,26 @@ const getTableData = async (resetPageNo = true, params?: Record<string, any>) =>
          }
          tableData.value = records;
          total!.value = resTotal;
-         emits('loaded');
       }
       else {
          tableData.value = res.data;
       }
+      emits('updated', {
+         data: toRaw(tableData.value),
+         requestParams: {...fieldsCache, ...props.params}
+      });
    } finally {
+      await nextTick();
       isLoading.value = false;
    }
 };
-if (props.autoLoad) getTableData();
+emits('load', {appendParams});
+getTableData().then(() => {
+   emits('loaded', {
+      data: toRaw(tableData.value),
+      requestParams: {...fieldsCache, ...props.params}
+   });
+});
 registerEvent({getTableData}, 'inner');
 registerEvent(exposeEventObj, 'expose');
 </script>

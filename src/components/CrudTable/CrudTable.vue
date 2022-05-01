@@ -1,11 +1,11 @@
 <template>
-   <div class="crud-table" :style="{'row-gap':props.gap+'px'}">
+   <div class="crud-table" :style="[props.gap?({'row-gap':props.gap+'px'}):'']">
       <slot />
    </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, provide } from 'vue';
+import { onUnmounted, provide } from 'vue';
 import { PJ_DISPATCH_EVENT, PJ_EMIT_EVENT } from '../../token';
 import { EventDispatcherCb, EventRegisterCb } from '../../types';
 
@@ -15,7 +15,6 @@ const props = defineProps({
       default: 0
    }
 });
-const emits = defineEmits(['ready']);
 //@ts-ignore
 let events = Object.create(null);
 let eventsExpose = Object.create(events);
@@ -37,10 +36,6 @@ provide<EventDispatcherCb>(PJ_DISPATCH_EVENT, (eventName, ...args) => {
 });
 
 defineExpose(eventsExpose);
-onMounted(() => {
-   emits('ready', eventsExpose);
-});
-
 onUnmounted(() => {
    events = null;
    eventsExpose = null;

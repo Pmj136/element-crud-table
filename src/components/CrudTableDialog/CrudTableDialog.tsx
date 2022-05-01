@@ -55,7 +55,7 @@ export default defineComponent({
             const t = dType.value!;
             if (isDev) {
               if (debug) {
-                console.log('【debug info】', {
+                console.log('【DEBUG】', {
                   url: reqUrl,
                   method: DYNAMIC_REQ_METHOD[t],
                   data: formatData(toRaw(form.value), outFormatter)
@@ -126,7 +126,7 @@ export default defineComponent({
           dTitle.value = title;
           dType.value = type;
         }
-        emit('open', {type, handler: exposeEventObj});
+        emit('open', type, exposeEventObj);
         visible.value = true;
         if (echoUrl && type !== TYPE_ADD) {
           await setRefreshData(echoUrl, extraData!.id as string);
@@ -144,36 +144,39 @@ export default defineComponent({
           v-model={visible.value}
           onClosed={onDialogClosed}
           append-to-body
+          close-on-click-modal={false}
           {...attrs}
           v-slots={{
-            footer: () => (
-               <>
-                 <el-button onClick={() => {
-                   visible.value = false;
-                 }}>取消
-                 </el-button>
-                 {
-                   dType.value === TYPE_PREVIEW
-                      ? (
-                         <el-button icon={Printer} type="primary">打印</el-button>
-                      )
-                      : (
-                         <el-button loading={isConfirm.value} type="success"
-                                    onClick={onDialogConfirm}>确定</el-button>
-                      )
-                 }
-               </>
-            )
+            footer: () => {
+              if (dType.value === TYPE_PREVIEW) {
+                return (
+                   <el-button onClick={() => {
+                     visible.value = false;
+                   }}>确定</el-button>
+                );
+              }
+              return (
+                 <>
+                   <el-button onClick={() => {
+                     visible.value = false;
+                   }}>取消
+                   </el-button>
+                   <el-button loading={isConfirm.value} type="success"
+                              onClick={onDialogConfirm}>确定
+                   </el-button>
+                 </>
+              );
+            }
           }}
        >
          <el-form
+            ref={formRef}
             v-loading={loadData.value}
             key={dType.value}
             inline
             label-position="left"
             label-width="110px"
             model={form.value}
-            ref={formRef}
             {...formProps}>
            {patchVModel(slots.default?.({
              form: form.value,
