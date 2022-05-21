@@ -1,5 +1,4 @@
 import { defineComponent, Ref, ref, toRaw } from 'vue';
-import { Printer } from '@element-plus/icons-vue';
 import patchVModel from '../../patchVModel';
 import { checkUnSetUrlErrLog, combineUrl, formatData, isDev } from '../../util';
 import {
