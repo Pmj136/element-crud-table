@@ -4,6 +4,7 @@
       <el-pagination
          background
          layout="total,prev, pager, next"
+         v-bind="$attrs"
          :current-page="privateStore.currentPage"
          :default-current-page="privateStore.defaultPageSize"
          :total="privateStore.total"
